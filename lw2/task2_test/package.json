@@ -1,0 +1,19 @@
+{
+  "name": "task1",
+  "version": "0.1.0",
+  "description": "",
+  "main": "main.js",
+  "type": "commonjs",
+  "scripts": {
+    "compile": "babel src --out-dir dist",
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.7",
+    "@babel/preset-env": "^7.16.11"
+  },
+  "dependencies": {
+    "electron": "^3.0.4"
+  }
+}

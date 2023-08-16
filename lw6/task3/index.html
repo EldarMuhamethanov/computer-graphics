@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css" />
+    <script src="./index.mjs" type="module"></script>
+    <title>Title</title>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script id="vertShader" type="shader-code">
+        uniform float uTime;
+
+        void setPosition(vec4 position) {
+            gl_Position = projectionMatrix * modelViewMatrix * position;
+        }
+
+        float square(float value) {
+            return value * value;
+        }
+
+        float calcStartZ(float p, float q) {
+            return (square(position.x) / p + square(position.y) / q) / 2.0;
+        }
+
+        float calcEndZ(float p, float q) {
+            return ((square(position.x) / (2.0 * p)) - (square(position.y) / (2.0 * q)));
+        }
+
+        bool isReverse(float time, float timeToMorph) {
+            float index = floor(time / timeToMorph);
+            return (int(index) % 2) == 1;
+        }
+
+        float calcTime(float time, float timeToMorph) {
+            float index = floor(time / timeToMorph);
+            return (time - (timeToMorph * index));
+        }
+
+        void main() {
+            float timeToMorph = 1000.0;
+            float time = uTime;
+            
+            bool isReverse = isReverse(time, timeToMorph);
+
+            time = calcTime(time, timeToMorph);          
+
+            float p = 4.0;
+            float q = 3.0;
+
+            float startZ = calcEndZ(p, q);
+            float endZ = calcStartZ(p, q);
+
+            float currZ;
+
+            if (isReverse) {
+                currZ = mix(endZ, startZ, time / timeToMorph);
+            }
+            else {
+                currZ = mix(startZ, endZ, time / timeToMorph);
+            }
+
+            setPosition(vec4( position.x, position.y, currZ, 1.0));
+		}
+    </script>
+
+    <script id="fragShader" type="shader-code">
+        
+        float convertRgb(float value) {
+            return value / 256.0;
+        }
+
+        void main() {
+            gl_FragColor = vec4(convertRgb(14.0),convertRgb(209.0),convertRgb(20.0),1.0);
+        }
+    </script>
+</body>
+
+</html>
